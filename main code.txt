@@ -1,0 +1,92 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 10.04.2024 16:46:16
+// Design Name: 
+// Module Name: non_res_div
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
+
+parameter bits=20;
+parameter bit=6;        
+module non_res_div (    
+    input clk,rst,      
+    input [bits:0] dividend,
+    input [bit:0] divisor,
+    output reg[bits:0
+    ] quotient,
+    output reg[bits:0] remainder
+);                      
+reg [bits:0] A=0,M,newA;
+reg[bits-1:0] Q;        
+reg [bits:0] n = bits;  
+reg [2*bits:0] PP;      
+reg P=0;                
+                         
+always @(posedge clk)    
+begin                    
+if(!rst)                
+begin                    
+ if(!P)                  
+ begin                  
+ Q=dividend;            
+ M=divisor;              
+ P=1;                    
+ end                    
+ else                    
+ begin                  
+ if(n!=0)                
+ begin                  
+ if(A[bits]==0)          
+ begin                  
+ PP={A,Q}<<1;            
+ newA=PP[2*bits:bits]+(~M+1);
+ Q=PP[bits-1:0];        
+ end                    
+ else                    
+ begin                  
+ PP={A,Q}<<1;            
+ newA=PP[2*bits:bits]+M;
+ Q=PP[bits-1:0];        
+end                      
+A=newA;                  
+if(A[bits]==0)          
+Q[0]=1;                  
+else                    
+Q[0]=0;                  
+n=n-1;                  
+end                      
+end                      
+                         
+if(n==0)                
+begin                    
+if(A[bits]==1)
+begin              
+A=A+M;                  
+quotient=Q;              
+remainder=A; 
+end  
+else
+begin
+quotient=Q;              
+remainder=A;
+end         
+end                      
+end                      
+end                      
+                         
+endmodule                
+
